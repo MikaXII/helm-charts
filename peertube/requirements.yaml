@@ -1,0 +1,8 @@
+# requirements.yaml
+dependencies:
+- name: postgresql
+  version: "0.13.1"
+  repository: "@stable"
+- name: redis
+  version: "3.3.5"
+  repository: "@stable"

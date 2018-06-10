@@ -1,0 +1,84 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ template "peertube.fullname" . }}
+  labels:
+    app: {{ template "peertube.name" . }}
+    chart: {{ template "peertube.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "peertube.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "peertube.name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 9000
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          env:
+            - name: PEERTUBE_WEBSERVER_HOSTNAME
+              value: {{ .Values.environment.hostname }}
+            - name: PEERTUBE_WEBSERVER_PORT
+              value: {{ .Values.environment.http | quote }}
+            - name: PEERTUBE_WEBSERVER_HTTPS
+              value: {{ .Values.environment.httpsEnabled | quote }}
+            - name: PEERTUBE_DB_HOSTNAME
+              value: {{ .Release.Name }}-{{ .Values.environment.dbHostname }}
+            - name: PEERTUBE_DB_USERNAME
+              value: {{ .Values.environment.dbUser }}
+            - name: PEERTUBE_DB_PASSWORD
+              value: {{ .Values.environment.dbPassword }}
+            - name: PEERTUBE_REDIS_HOSTNAME
+              value: {{ .Release.Name }}-{{ .Values.environment.redisHostname }}-master
+            - name: PEERTUBE_SMTP_USERNAME
+              value: {{ .Values.environment.smtpUser }}
+            - name: PEERTUBE_SMTP_PASSWORD
+              value: {{ .Values.environment.smtpPassword }}
+            - name: PEERTUBE_SMTP_HOSTNAME
+              value: {{ .Values.environment.smtpHostname }}
+            - name: PEERTUBE_SMTP_PORT
+              value: {{ .Values.environment.smtpPort }}
+            - name: PEERTUBE_SMTP_FROM
+              value: {{ .Values.environment.smtpFrom | quote }}
+            - name: PEERTUBE_SMTP_TLS
+              value: {{ .Values.environment.smtpTls }}
+            - name: PEERTUBE_ADMIN_EMAIL
+              value: {{ .Values.environment.admin | quote }}
+            - name: PEERTUBE_SIGNUP_ENABLED
+              value: {{ .Values.environment.signup  | quote }}
+            - name: PEERTUBE_TRANSCODING_ENABLED
+              value: {{ .Values.environment.transcoding | quote }}
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
