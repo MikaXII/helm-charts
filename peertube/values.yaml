@@ -14,13 +14,13 @@ service:
   port: 9000
 
 ingress:
-  enabled: false
+  enabled: true
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   path: /
   hosts:
-    - peertube.domain.tld
+    - peertube.domain.fr
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
@@ -44,8 +44,12 @@ tolerations: []
 
 affinity: {}
 
+persistence:
+  enabled: true
+  existingClaim: pvc-peertube
+
 environment:
-  hostname: peertube.domain.tld
+  hostname: peertube.domain.fr
   http: 80
   httpsEnabled: false
   dbHostname: postgresql
@@ -67,13 +71,17 @@ postgresql:
   postgresDatabase: peertube
   postgresPassword: peertubesuperpass
   persistence:
-    enabled: false
+    enabled: true
+    existingClaim: pvc-postgres
+    subPath: ""
 
 redis:
   usePassword: false
   password: peertube
   master:
     persistence:
-      enabled: false
+      enabled: true
+      path: /data
   persistence:
-    enabled: false
+    enabled: true
+    existingClaim: pvc-redis

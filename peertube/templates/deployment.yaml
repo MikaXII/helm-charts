@@ -68,6 +68,9 @@ spec:
               value: {{ .Values.environment.signup  | quote }}
             - name: PEERTUBE_TRANSCODING_ENABLED
               value: {{ .Values.environment.transcoding | quote }}
+          volumeMounts:
+            - name: data
+              mountPath: /data
           resources:
 {{ toYaml .Values.resources | indent 12 }}
     {{- with .Values.nodeSelector }}
@@ -82,3 +85,11 @@ spec:
       tolerations:
 {{ toYaml . | indent 8 }}
     {{- end }}
+      volumes:
+        - name: data
+{{- if .Values.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.existingClaim }}
+{{- else }}
+            emptyDir: {}
+{{- end }}
