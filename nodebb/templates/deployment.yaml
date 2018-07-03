@@ -1,0 +1,111 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ template "nodebb.fullname" . }}
+  labels:
+    app: {{ template "nodebb.name" . }}
+    chart: {{ template "nodebb.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "nodebb.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "nodebb.name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: NODEBB_URL
+              value: {{ .Values.env.nodebburl }}
+            - name: NODEBB_PORT
+              value: {{ .Values.env.nodebbPort | quote}}
+            - name: NODEBB_SECRET
+              value: {{ .Values.env.nodebbSecret | quote }}
+            - name: NODEBB_PLUGINLIST
+              value: {{ .Values.env.nodebbPluginList }}
+            - name: NODEBB_WEBSOCKETONLY
+              value: "{{ .Values.env.nodebbWebsocketOnly }}"
+            - name: NODEBB_AUTO_UPGRADE
+              value: "{{ .Values.env.autoUpgrade }}"
+{{- if .Values.mongo.enabled }}
+            - name: MONGO_HOST
+              value: {{  template "mongodb.fullname" . }}
+            - name: MONGO_PORT
+              value: {{ .Values.mongodb.service.port | quote }}
+            - name: MONGO_USERNAME
+              value: {{ .Values.mongodb.mongodbUsername }}
+            - name: MONGO_PASSWORD
+              value: {{ .Values.mongodb.mongodbPassword }}
+            - name: MONGO_DATABASE
+              value: {{ .Values.mongodb.mongodbDatabase }}
+{{- else }}
+            - name: MONGO_HOST
+              value: "{{ .Values.env.mongoHost }}"
+            - name: MONGO_PORT
+              value: {{ .Values.env.mongoPort | quote }}
+            - name: MONGO_USERNAME
+              value: {{ .Values.env.mongoUsername }}
+            - name: MONGO_PASSWORD
+              value: {{ .Values.env.mongoPassword }}
+            - name: MONGO_DATABASE
+              value: {{ .Values.env.mongoDatabase }}
+{{- end }}
+            - name: ADMIN_USERNAME
+              value: {{ .Values.env.adminUsername }}
+            - name: ADMIN_PASSWORD
+              value: {{ .Values.env.adminPassword }}
+            - name: ADMIN_EMAIL
+              value: {{ .Values.env.adminEmail }}
+            - name: SSMTP_DOMAIN
+              value: {{ .Values.env.ssmtpDomain }}
+            - name: SSMTP_EMAIL
+              value: {{ .Values.env.ssmtpEmail }}
+            - name: SSMTP_HOST
+              value: {{ .Values.env.ssmtpHost }}
+            - name: SSMTP_PORT
+              value: {{ .Values.env.ssmtpPort | quote }}
+            - name: SSMTP_PASSWORD
+              value: {{ .Values.env.ssmtpPassword }}
+            - name: AWS_ACCESS_KEY_ID
+              value: {{ .Values.env.awsAccessKey }}
+            - name: AWS_SECRET_ACCESS_KEY
+              value: {{ .Values.env.awsSecretAccessKey }}
+            - name: S3_UPLOADS_BUCKET
+              value: {{ .Values.env.S3UploadsBucket }}
+            - name: S3_UPLOADS_HOST
+              value: {{ .Values.env.S3UploadsHost }}              
+          ports:
+            - name: http
+              containerPort: 4567
+              protocol: TCP
+          # livenessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          # readinessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}

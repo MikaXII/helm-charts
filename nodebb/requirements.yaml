@@ -1,0 +1,6 @@
+# requirements.yaml
+dependencies:
+- name: mongodb
+  version: "3.0.1"
+  repository: "@stable"
+  condition: mongo.enabled
