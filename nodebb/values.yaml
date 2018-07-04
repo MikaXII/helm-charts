@@ -33,11 +33,11 @@ env:
   nodebbPluginList: # List separate by comma
   nodebbWebsocketOnly: false
   nodebbWebsocketOnly: false
-  mongoHost: mongo
-  mongoPort: 27017
-  mongoUsername:
-  mongoPassword:
-  mongoDatabase:
+  mongoHost: mongo # override if mongo.enabled
+  mongoPort: 27017 # override if mongo.enabled
+  mongoUsername: # override if mongo.enabled
+  mongoPassword: # override if mongo.enabled
+  mongoDatabase: # override if mongo.enabled
   adminUsername: admin
   adminPassword: adminsupersecurepassword
   adminEmail: admin@example.com
