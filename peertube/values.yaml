@@ -45,8 +45,13 @@ tolerations: []
 affinity: {}
 
 persistence:
-  enabled: true
-  existingClaim: pvc-peertube
+  data:
+    enabled: false
+    existingClaim: pvc-peertube
+  config:
+    enabled: false
+    existingClaim: pvc-ptconfig
+
 
 environment:
   hostname: peertube.domain.fr
