@@ -57,7 +57,7 @@ spec:
             - name: PEERTUBE_SMTP_HOSTNAME
               value: {{ .Values.environment.smtpHostname }}
             - name: PEERTUBE_SMTP_PORT
-              value: {{ .Values.environment.smtpPort }}
+              value: {{ .Values.environment.smtpPort | quote }}
             - name: PEERTUBE_SMTP_FROM
               value: {{ .Values.environment.smtpFrom | quote }}
             - name: PEERTUBE_SMTP_TLS
