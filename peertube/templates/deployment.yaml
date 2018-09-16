@@ -51,17 +51,17 @@ spec:
             - name: PEERTUBE_REDIS_HOSTNAME
               value: {{ .Release.Name }}-{{ .Values.environment.redisHostname }}-master
             - name: PEERTUBE_SMTP_USERNAME
-              value: {{ .Values.environment.smtpUser }}
+              value: {{ .Values.environment.smtpUser | quote }}
             - name: PEERTUBE_SMTP_PASSWORD
               value: {{ .Values.environment.smtpPassword }}
             - name: PEERTUBE_SMTP_HOSTNAME
               value: {{ .Values.environment.smtpHostname }}
             - name: PEERTUBE_SMTP_PORT
-              value: {{ .Values.environment.smtpPort }}
+              value: {{ .Values.environment.smtpPort | quote }}
             - name: PEERTUBE_SMTP_FROM
               value: {{ .Values.environment.smtpFrom | quote }}
             - name: PEERTUBE_SMTP_TLS
-              value: {{ .Values.environment.smtpTls }}
+              value: {{ .Values.environment.smtpTls | quote }}
             - name: PEERTUBE_ADMIN_EMAIL
               value: {{ .Values.environment.admin | quote }}
             - name: PEERTUBE_SIGNUP_ENABLED
