@@ -71,6 +71,8 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /data
+            - name: config
+              mountPath: /config
           resources:
 {{ toYaml .Values.resources | indent 12 }}
     {{- with .Values.nodeSelector }}
@@ -86,10 +88,19 @@ spec:
 {{ toYaml . | indent 8 }}
     {{- end }}
       volumes:
+{{- if .Values.persistence.data.enabled }}
         - name: data
-{{- if .Values.persistence.enabled }}
           persistentVolumeClaim:
-            claimName: {{ .Values.persistence.existingClaim }}
+            claimName: {{ .Values.persistence.data.existingClaim }}
 {{- else }}
-            emptyDir: {}
+        - name: data
+          emptyDir: {}
+{{- end }}
+{{- if .Values.persistence.config.enabled }}
+        - name: config
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.config.existingClaim }}
+{{- else }}
+        - name: config
+          emptyDir: {}
 {{- end }}
