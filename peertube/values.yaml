@@ -65,6 +65,8 @@ environment:
   admin: admin@domain.tld
   signup: false
   transcoding: false
+  # Add trustProxy as list eg: 127.0.0.1,192.168.1.0/24
+  trustProxy: "127.0.0.1"
 
 postgresql:
   postgresUser: peertube

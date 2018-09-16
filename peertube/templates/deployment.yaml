@@ -68,6 +68,8 @@ spec:
               value: {{ .Values.environment.signup  | quote }}
             - name: PEERTUBE_TRANSCODING_ENABLED
               value: {{ .Values.environment.transcoding | quote }}
+            - name: PEERTUBE_TRUST_PROXY
+              value: {{ .Values.environment.trustProxy | quote }}
           volumeMounts:
             - name: data
               mountPath: /data
